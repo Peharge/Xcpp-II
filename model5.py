@@ -1843,7 +1843,7 @@ class MainWindow(QMainWindow):
                 return
 
             res = ollama.chat(
-                model="llava:7b", # ändern durch xcpp
+                model="llama3.2-vision", # ändern durch xcpp2
                 messages=[
                     {
                         'role': 'user',
