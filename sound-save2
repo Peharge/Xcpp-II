@@ -1,0 +1,174 @@
+import sys
+import numpy as np
+import sounddevice as sd
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QPainter, QColor, QPen, QFont
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGroupBox, QFormLayout, QLabel, QSlider, QPushButton, QMessageBox, \
+    QComboBox, QApplication, QStyleFactory, QFrame
+from PyQt5.QtGui import QFont, QIcon, QColor
+from PyQt5.QtCore import Qt
+import sys
+from PyQt5.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtCore import QUrl
+
+class WaveformWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.data = np.zeros(1024)
+
+    def update_waveform(self, data):
+        self.data = data
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+        pen = QPen(QColor(0, 0, 255))
+        pen.setWidth(2)
+        painter.setPen(pen)
+
+        width = self.size().width()
+        height = self.size().height()
+        middle = height / 2
+
+        # Zeichne die Wellenform
+        step = width / len(self.data)
+        for i in range(1, len(self.data)):
+            x1 = int((i - 1) * step)
+            y1 = int(middle - self.data[i - 1] * middle)
+            x2 = int(i * step)
+            y2 = int(middle - self.data[i] * middle)
+            painter.drawLine(x1, y1, x2, y2)
+
+class VoiceAnimationWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Sprachanimation")
+        self.setGeometry(100, 100, 800, 400)
+        self.initUI()
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)  # Fenster ohne Rahmen
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.audio_data = np.zeros(1024)  # Initialisiere Audio-Daten mit Nullen
+        self.stream = sd.InputStream(channels=1, callback=self.audio_callback, blocksize=1024, samplerate=44100)
+        self.stream.start()
+
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update_waveform)
+        self.timer.start(30)
+
+        self.threshold = 0.05  # Schwellenwert für die Lautstärke
+
+    def initUI(self):
+        self.container = QWidget(self)
+        self.setCentralWidget(self.container)
+
+        self.layout = QVBoxLayout(self.container)
+        self.waveform_widget = WaveformWidget()
+        self.layout.addWidget(self.waveform_widget)
+
+        self.setGeometry(100, 100, 800, 400)
+
+        # Setze die Schriftgröße und den Stil für die gesamte Anwendung
+        font = QFont('Segoe UI', 12)
+        self.setFont(font)
+
+        main_layout = QVBoxLayout()
+        main_frame = QFrame(self)
+        main_frame.setFixedSize(800, 400)  # Setzt die Größe auf 800x400 Pixel
+
+        main_frame.setStyleSheet("""
+            QFrame {
+                background-color: rgba(255, 255, 255, 0.7);
+                border-radius: 15px;
+                box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            }
+        """)
+
+        main_frame_layout = QVBoxLayout(main_frame)
+
+        # Titel-Layout mit Schließen-Button
+        title_layout = QHBoxLayout()
+        title_label = QLabel("Settings")
+        title_label.setStyleSheet(
+            "color: #000000; font-size: 16px; font-weight: bold; background-color: rgba(255, 255, 255, 0);")
+        title_layout.addWidget(title_label)
+
+        close_button = QPushButton("×")
+        close_button.clicked.connect(self.play_sound_2)
+        close_button.setStyleSheet("""
+            QPushButton {
+                background-color: #C0392B;
+                color: #FFFFFF;
+                border: none;
+                border-radius: 10px;
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #E74C3C;
+            }
+        """)
+        close_button.clicked.connect(self.close)
+        title_layout.addStretch()
+        title_layout.addWidget(close_button)
+
+        # Füge das Titel-Layout oben hinzu
+        main_frame_layout.addLayout(title_layout)
+
+        # Ein Stretch-Element, das den restlichen Inhalt nach unten schiebt
+        main_frame_layout.addStretch()
+
+        # Füge das Main Frame zum Hauptlayout hinzu
+        main_layout.addWidget(main_frame)
+
+    def play_sound_2(self):
+        try:
+            # Pfad zur MP3-Datei
+            mp3_path = "C:/Users/julia/PycharmProjects/Xcpp/tv-shut-down-185446.mp3"
+
+            # Erstellen der QMediaContent-Instanz
+            url = QUrl.fromLocalFile(mp3_path)
+            content = QMediaContent(url)
+
+            # Setzen des Inhalts für den MediaPlayer
+            self.player.setMedia(content)
+
+            # Starten der Wiedergabe
+            self.player.play()
+            print(f"Playing sound from: {mp3_path}")
+
+        except Exception as e:
+            print(f"Error while trying to play sound: {e}")
+
+    def audio_callback(self, indata, frames, time, status):
+        if status:
+            print(status)
+        # Normalisierung der Audiodaten
+        normalized_data = np.squeeze(indata) / np.max(np.abs(indata))
+
+        # Überprüfen, ob das Signal den Schwellenwert überschreitet
+        if np.max(np.abs(normalized_data)) > self.threshold:
+            self.audio_data = normalized_data
+        else:
+            # Wenn das Signal zu klein ist, keine Änderung an den Audiodaten vornehmen
+            self.audio_data = np.zeros_like(self.audio_data)
+
+    def update_waveform(self):
+        self.waveform_widget.update_waveform(self.audio_data)
+
+    def closeEvent(self, event):
+        self.timer.stop()
+        self.stream.stop()
+        self.stream.close()
+        super().closeEvent(event)
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    mainWin = VoiceAnimationWindow()
+    mainWin.show()
+    sys.exit(app.exec_())

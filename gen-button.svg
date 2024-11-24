@@ -1,0 +1,57 @@
+<svg width="240" height="80" viewBox="0 0 240 80" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hintergrund des Buttons -->
+  <rect x="0" y="0" width="240" height="80" rx="30" fill="#1C1A1C" class="btn-background"/>
+
+  <!-- SVG-Grafik (Sparkle) -->
+  <svg x="20" y="20" height="24" width="24" fill="#AAAAAA" viewBox="0 0 24 24" class="sparkle">
+    <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"/>
+  </svg>
+
+  <!-- Text auf dem Button -->
+  <text x="80" y="50" font-weight="600" font-size="medium" fill="#AAAAAA" class="btn-text">Generate</text>
+
+  <!-- Hover-Effekte -->
+  <style>
+    .btn-background {
+      transition: background 450ms ease-in-out, transform 450ms ease-in-out;
+    }
+
+    .sparkle {
+      transition: fill 800ms ease, transform 800ms ease;
+    }
+
+    .btn-text {
+      transition: fill 450ms ease-in-out;
+    }
+
+    .btn-background:hover {
+      fill: url(#gradient);
+      filter: url(#hover-shadow);
+      transform: translateY(-2px);
+    }
+
+    .btn-background:hover ~ .sparkle {
+      fill: white;
+      transform: scale(1.2);
+    }
+
+    .btn-background:hover ~ .btn-text {
+      fill: white;
+    }
+  </style>
+
+  <!-- Gradient für den Hover-Effekt -->
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#A47CF3; stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#683FEA; stop-opacity:1" />
+    </linearGradient>
+    <!-- Schatteneffekte für den Hover-Zustand -->
+    <filter id="hover-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="1" stdDeviation="0" flood-color="rgba(255, 255, 255, 0.4)" />
+      <feDropShadow dx="0" dy="-4" stdDeviation="0" flood-color="rgba(0, 0, 0, 0.2)" />
+      <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="rgba(255, 255, 255, 0.2)" />
+      <feDropShadow dx="0" dy="0" stdDeviation="180" flood-color="#9917FF" />
+    </filter>
+  </defs>
+</svg>
