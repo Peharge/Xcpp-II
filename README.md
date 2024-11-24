@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./images-readme/solution.ico" width="250"/>
+    <img src="./readme-img/xcpp-logo-new2.png" width="500"/>
 </p>
 <br>
 <div align="center">
