@@ -34,5 +34,11 @@
 
 # Xc++ 2
 
-🚨 IMPORTANT: NOT PUBLIC YET!!! 🚨
-and not yet commented (I will make this repository readable by 01.12.2024)
+Xc++ 2 is an experimental AI-powered video chat assistant.
+You can have real-time conversations with it, and it also analyzes what's happening in the camera feed — enabling interactive and context-aware responses.
+
+💡 Designed to explore the fusion of video communication and AI perception.
+
+⚠️ Note: This project is currently undocumented and has not been updated since August 2024. Use at your own risk.
+
+Peharge
