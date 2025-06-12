@@ -42,3 +42,10 @@ You can have real-time conversations with it, and it also analyzes what's happen
 ⚠️ Note: This project is currently undocumented and has not been updated since August 2024. Use at your own risk.
 
 Peharge
+
+<div align="center">
+
+### **_Peharge Terminal_**
+_Peharge Projects 2024_
+
+</div>
